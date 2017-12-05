@@ -42,21 +42,23 @@ def is_phone(p):
       return True
    return False
 
-def is_year(y):
-   if 
-
-
-def is_pin(p):
-   if
+def is_year(y): #after PIN
+   if is_string_of_digits(y) and y[0:4] < 2018:
+      print "year", y[0:4]
+      return True
+   else:
+      return False
 
 
 # Suggested approach to distinguishing years from PINs
 # Returns true iff string word is found in list wordlist within scan_range positions (left or right) of start_pos 
 def scan(wordlist, word, start_pos, scan_range):
-   if word in wordlist[:start_pos+scan_range] or word in wordlist[start_pos - scan_range:]:
-      return True
-   
-   return False  # placeholder
+   if word in wordlist[start_pos-scan_range:start_pos] and word in wordlist[start_pos-scan_range:start_pos]:
+      if is_string_of_digits(wordlist[start_pos]):
+         return True
+   else:
+      return is_year(wordlist[start_pos])
+         
   
 # Takes a text t as a list of words with sentence-final punctuation removed and returns that text with markup for the following NSW categories: zip codes, phone numbers, years, and PINs.
 def NSW_markup(t):
@@ -66,17 +68,23 @@ def NSW_markup(t):
    while i < len(t):
       if is_zip(t[i]):
          print t[i],'is a zip code!'
-         total = '<zip>'+t[i] +'</zip'
-         markedup.append(total)   
+         total = '<zip>'+t[i] +'</zip>'
+         markedup.append(total)
       elif is_phone(t[i]):     
          print t[i], 'is a phone num!'
-         total = '<phone>'+ t[i]+'</phone'
+         total = '<phone>'+ t[i]+'</phone>'
          markedup.append(total)
-      elif is_year(t[i]):
-         print t[i], 'is a year'
-      elif is_pin(t[i]):
+      elif scan(t, 'PIN', i, 2):
+         print t[i],'is a pin!'
+         total = '<pin>'+ t[i]+ '</pin>'
+         markedup.append(total)
+      elif scan(t, 'year', i, 3):
+         print t[i],'is a year!'
+         total = '<year>'+ t[i]+ '</year>'
+         markedup.append(total)
+      else:
+         markedup.append(t[i])
       i+=1
-      
    return markedup
 
 def demo():
